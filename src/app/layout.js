@@ -1,9 +1,11 @@
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const montserratSans = Montserrat({
     variable: "--font-montserrat-sans",
     subsets: ["latin"],
+    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 });
 
 export const metadata = {
@@ -17,7 +19,11 @@ export default function RootLayout({ children }) {
             lang="fr"
             className={`${montserratSans.variable} h-full antialiased`}
         >
-            <body className="min-h-full flex flex-col">{children}</body>
+            <body className="min-h-full flex flex-col">
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    {children}
+                </ThemeProvider>
+            </body>
         </html>
     );
 }

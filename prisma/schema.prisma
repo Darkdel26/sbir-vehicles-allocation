@@ -1,0 +1,67 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "sqlite"
+}
+
+enum EtatVehicule {
+    Disponible
+    Indisponible
+}
+
+enum BloquageVehicule {
+    Oui
+    Non
+}
+
+enum EtatChauffeur {
+    Disponible
+    Indisponible
+}
+
+model Admin {
+    id       String    @id @default(cuid())
+    username String    @unique
+    password String
+    sessions Session[]
+}
+
+model Vehicule {
+    id               String            @id @default(cuid())
+    designation      String
+    matricule        String            @unique
+    etat             EtatVehicule      @default(Disponible)
+    bloquage         BloquageVehicule  @default(Non)
+    indisponibilites Indisponibilite[]
+}
+
+model Chauffeur {
+    id               String            @id @default(cuid())
+    nom              String
+    prenom           String
+    etat             EtatChauffeur     @default(Disponible)
+    indisponibilites Indisponibilite[]
+}
+
+model Indisponibilite {
+    id                    String   @id @default(cuid())
+    id_vehicule           String
+    chauffeurId           String
+    debut_indisponibilite DateTime
+    fin_indisponibilite   DateTime
+    itineraire            String
+    motif                 String
+
+    vehicule  Vehicule  @relation(fields: [id_vehicule], references: [id])
+    chauffeur Chauffeur @relation(fields: [chauffeurId], references: [id])
+}
+
+model Session {
+    id        String   @id @default(cuid())
+    adminId   String
+    expiresAt DateTime
+    admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
